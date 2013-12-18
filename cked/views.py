@@ -10,7 +10,7 @@ from pytils.translit import translify
 from cked import elFinder
 from cked.widgets import json_encode
 from cked import default_settings
-
+import re
 from django.contrib.admin.views.decorators import staff_member_required
 
 
@@ -65,8 +65,14 @@ def elfinder_connector(request):
     if request.FILES and request.FILES.getlist('upload[]'):
         up_files = {}
         for up in request.FILES.getlist('upload[]'):
+
             if up.name:
-                file_name = slugify(translify(up.name))
+                tempname = re.search(r'^(.*)\.(\w+)$', up.name)
+                if tempname:
+                    file_name = u'%s.%s' % tempname.groups()
+                else:
+                    file_name = up.name
+                    
                 up_files[file_name] = up.file
 
         req[field] = up_files

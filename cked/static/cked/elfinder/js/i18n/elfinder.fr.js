@@ -1,15 +1,17 @@
 /**
  * French translation
- * @author Régis Guyomarch <regisg@gmail.com>
- * @version 2011-07-11
+ * @author Régis Guyomarch <regisg@gmail.com>, Benoit Delachaux <benorde33@gmail.com>
+ * @version 2014-12-19
  */
 if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object') {
 	elFinder.prototype.i18.fr = {
-		translator : 'Régis Guyomarch &lt;regisg@gmail.com&gt;',
+		translator : 'Régis Guyomarch &lt;regisg@gmail.com&gt;Benoit Delachaux &lt;benorde33@gmail.com&gt;',
 		language   : 'française',
 		direction  : 'ltr',
+		dateFormat : 'd M, Y H:i',
+		fancyDateFormat : '$1 H:i',
 		messages   : {
-			
+
 			/********************************** errors **********************************/
 			'error'                : 'Erreur',
 			'errUnknown'           : 'Erreur inconnue.',
@@ -36,7 +38,7 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'errRead'              : 'Impossible de lire "$1".',
 			'errWrite'             : 'Impossible d\'écrire dans "$1".',
 			'errPerm'              : 'Permission refusée.',
-			'errLocked'            : '"$1" est verrouillé et ne peut être déplace ou supprimé.',
+			'errLocked'            : '"$1" est verrouillé et ne peut être déplacé ou supprimé.',
 			'errExists'            : 'Un fichier nommé "$1" existe déjà.',
 			'errInvName'           : 'Nom de fichier incorrect.',
 			'errFolderNotFound'    : 'Dossier non trouvé.',
@@ -47,20 +49,23 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'errMkfile'            : 'impossible de créer le fichier "$1".',
 			'errRename'            : 'Impossible de renommer "$1".',
 			'errCopyFrom'          : 'Interdiction de copier des fichiers depuis le volume "$1".',
-			'errCopyTo'            : 'Interdiction copier des fichiers vers le volume "$1".',
-			'errUploadCommon'      : 'Erreur lors de l\'envoi du fichier.',
-			'errUpload'            : 'Impossible d\'envoyer "$1".',
-			'errUploadNoFiles'     : 'Aucun fichier a envoyer.',
-			'errMaxSize'           : 'Les données dépassent la taille maximale allouée.',
-			'errFileMaxSize'       : 'Le fichier dépasse la taille maximale allouée.',
+			'errCopyTo'            : 'Interdiction de copier des fichiers vers le volume "$1".',
+			'errUpload'            : 'Erreur lors de l\'envoi du fichier.',
+			'errUploadFile'        : 'Impossible d\'envoyer "$1".',
+			'errUploadNoFiles'     : 'Aucun fichier à envoyer.',
+			'errUploadTotalSize'   : 'Les données dépassent la taille maximale allouée.',
+			'errUploadFileSize'    : 'Le fichier dépasse la taille maximale allouée.',
 			'errUploadMime'        : 'Type de fichier non autorisé.',
-			'errUploadTransfer'    : '"$1" erreur transfert.', 
+			'errUploadTransfer'    : '"$1" erreur transfert.',
+			'errNotReplace'        : 'L\'objet "$1" existe déjà à cet endroit et ne peut être remplacé par un objet d\'un type différent.', // new
+			'errReplace'           : 'Impossible de remplacer "$1".', // added 11.08.1013
 			'errSave'              : 'Impossible de sauvegarder "$1".',
 			'errCopy'              : 'Impossible de copier "$1".',
 			'errMove'              : 'Impossible de déplacer "$1".',
 			'errCopyInItself'      : 'Impossible de copier "$1" sur lui-même.',
 			'errRm'                : 'Impossible de supprimer "$1".',
-			'errExtract'           : 'Impossible d\'extraire les fichier de "$1".',
+			'errRmSrc'             : 'Impossible de supprimer le(s) fichier(s) source(s).',
+			'errExtract'           : 'Imbossible d\'extraire les fichiers à partir de "$1".', // added 11.08.2012
 			'errArchive'           : 'Impossible de créer l\'archive.',
 			'errArcType'           : 'Type d\'archive non supporté.',
 			'errNoArchive'         : 'Le fichier n\'est pas une archive, ou c\'est un type d\'archive non supporté.',
@@ -68,7 +73,29 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'errReplByChild'       : 'Le dossier “$1” ne peut pas être remplacé par un élément qu\'il contient.',
 			'errArcSymlinks'       : 'Par mesure de sécurité, il est défendu d\'extraire une archive contenant des liens symboliques.',
 			'errArcMaxSize'        : 'Les fichiers de l\'archive excèdent la taille maximale autorisée.',
-			
+			'errResize'            : 'Impossible de redimensionner "$1".',
+			'errResizeDegree'      : 'Degré de rotation invalide.',  // added 11.8.2013
+			'errResizeRotate'      : 'L\'image ne peut pas être tournée.',  // added 11.8.2013
+			'errResizeSize'        : 'Dimension de l\'image non-valide.',  // added 11.8.2013
+			'errResizeNoChange'    : 'L\'image n\'est pas redimensionnable.',  // added 11.8.2013
+			'errUsupportType'      : 'Type de fichier non supporté.',
+			'errNotUTF8Content'    : 'Le fichier "$1" n\'est pas en UTF-8, il ne peut être édité.',  // added 9.11.2011
+			'errNetMount'          : 'Impossible de monter "$1".', // added 17.04.2012
+			'errNetMountNoDriver'  : 'Protocol non supporté.',     // added 17.04.2012
+			'errNetMountFailed'    : 'Echec du montage.',         // added 17.04.2012
+			'errNetMountHostReq'   : 'Hôte requis.', // added 18.04.2012
+			'errSessionExpires'    : 'Votre session a expiré en raison de son inactivité',
+			'errCreatingTempDir'   : 'Impossible de créer le répertoire temporaire : "$1"',
+			'errFtpDownloadFile'   : 'Impossible de télécharger le file depuis l\'accès FTP : "$1"',
+			'errFtpUploadFile'     : 'Impossible d\'envoyer le fichier vers l\'accès FTP : "$1"',
+			'errFtpMkdir'          : 'Impossible de créer un répertoire distant sur l\'accès FTP :"$1"',
+			'errArchiveExec'       : 'Erreur lors de l\'archivage des fichiers : "$1"',
+			'errExtractExec'       : 'Erreur lors de l\'extraction des fichiers : "$1"',
+			'errNetUnMount'        : 'Impossible de démonter', // from v2.1 added 30.04.2012
+			'errConvUTF8'          : 'Conversion en UTF-8 impossible', // from v2.1 added 08.04.2014
+			'errFolderUpload'      : 'Essayez Google Chrome, si voulez envoyer le dossier.', // from v2.1 added 26.6.2015
+			'errSearchTimeout'     : 'Délai d’attente dépassé pour la recherche "$1". Le résultat de la recherche est partiel.', // from v2.1 added 12.1.2016
+
 			/******************************* commands names ********************************/
 			'cmdarchive'   : 'Créer une archive',
 			'cmdback'      : 'Précédent',
@@ -80,10 +107,11 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'cmdextract'   : 'Extraire les fichiers de l\'archive',
 			'cmdforward'   : 'Suivant',
 			'cmdgetfile'   : 'Sélectionner les fichiers',
-			'cmdhelp'      : 'À propose de ce logiciel',
+			'cmdhelp'      : 'À propos de ce logiciel',
 			'cmdhome'      : 'Accueil',
 			'cmdinfo'      : 'Informations',
 			'cmdmkdir'     : 'Nouveau dossier',
+			'cmdmkdirin'   : 'Dans un nouveau dossier', // from v2.1.7 added 19.2.2016
 			'cmdmkfile'    : 'Nouveau fichier texte',
 			'cmdopen'      : 'Ouvrir',
 			'cmdpaste'     : 'Coller',
@@ -95,17 +123,34 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'cmdup'        : 'Remonter au dossier parent',
 			'cmdupload'    : 'Envoyer les fichiers',
 			'cmdview'      : 'Vue',
-			'cmdresize'    : 'Redimmensionner l\'image',
+			'cmdresize'    : 'Redimensionner l\'image',
 			'cmdsort'      : 'Trier',
-			
-			/*********************************** buttons ***********************************/ 
+			'cmdnetmount'  : 'Monter un volume réseau', // added 18.04.2012
+			'cmdnetunmount': 'Démonter', // from v2.1 added 30.04.2012
+			'cmdplaces'    : 'Vers Places', // added 28.12.2014
+			'cmdchmod'     : 'Changer de mode', // from v2.1 added 20.6.2015
+			'cmdopendir'   : 'Ouvrir un dossier', // from v2.1 added 13.1.2016
+
+			/*********************************** buttons ***********************************/
 			'btnClose'  : 'Fermer',
 			'btnSave'   : 'Sauvegarder',
 			'btnRm'     : 'Supprimer',
+			'btnApply'  : 'Apply',
 			'btnCancel' : 'Annuler',
 			'btnNo'     : 'Non',
 			'btnYes'    : 'Oui',
-			
+			'btnMount'  : 'Monter',  // added 18.04.2012
+			'btnApprove': 'Aller à $1 & approuver', // from v2.1 added 26.04.2012
+			'btnUnmount': 'Démonter', // from v2.1 added 30.04.2012
+			'btnConv'   : 'Convertir', // from v2.1 added 08.04.2014
+			'btnCwd'    : 'Ici',      // from v2.1 added 22.5.2015
+			'btnVolume' : 'Volume',    // from v2.1 added 22.5.2015
+			'btnAll'    : 'Tous',       // from v2.1 added 22.5.2015
+			'btnMime'   : 'Type MIME', // from v2.1 added 22.5.2015
+			'btnFileName':'Nom du fichier',  // from v2.1 added 22.5.2015
+			'btnSaveClose': 'Enregistrer & Ferme', // from v2.1 added 12.6.2015
+			'btnBackup' : 'Sauvegarde', // fromv2.1 added 28.11.2015
+
 			/******************************** notifications ********************************/
 			'ntfopen'     : 'Ouvrir le dossier',
 			'ntffile'     : 'Ouvrir le fichier',
@@ -123,34 +168,66 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'ntfarchive'  : 'Création de l\'archive',
 			'ntfextract'  : 'Extraction des fichiers de l\'archive',
 			'ntfsearch'   : 'Recherche des fichiers',
-			'ntfsmth'     : 'Fait quelque chose >_<',
-			
+			'ntfresize'   : 'Re-tailler les images',
+			'ntfsmth'     : 'Fait quelque chose',
+			'ntfloadimg'  : 'Chargement de l\' image',
+			'ntfnetmount' : 'Monte le volume réseau', // added 18.04.2012
+			'ntfdim'      : 'Calcule la dimension de l\'image', // added 20.05.2013
+			'ntfreaddir'  : 'Lecture des informations du dossier', // from v2.1 added 01.07.2013
+			'ntfurl'      : 'Récupération de l’URL du lien', // from v2.1 added 11.03.2014
+			'ntfchmod'    : 'Changement de mode', // from v2.1 added 20.6.2015
+			'ntfpreupload': 'Vérification du nom du fichier envoyé', // from v2.1 added 31.11.2015
+			'ntfzipdl'    : 'Création d’un fichier pour le téléchargement', // from v2.1.7 added 23.1.2016
+
 			/************************************ dates **********************************/
 			'dateUnknown' : 'Inconnue',
 			'Today'       : 'Aujourd\'hui',
 			'Yesterday'   : 'Hier',
-			'Jan'         : 'Jan',
-			'Feb'         : 'Fév',
-			'Mar'         : 'Mar',
-			'Apr'         : 'Avr',
+			'msJan'       : 'Jan',
+			'msFeb'       : 'Fév',
+			'msMar'       : 'Mar',
+			'msApr'       : 'Avr',
+			'msMay'       : 'Mai',
+			'msJun'       : 'Jun',
+			'msJul'       : 'Jul',
+			'msAug'       : 'Aoû',
+			'msSep'       : 'Sep',
+			'msOct'       : 'Oct',
+			'msNov'       : 'Nov',
+			'msDec'       : 'Déc',
+			'January'     : 'Janvier',
+			'February'    : 'Février',
+			'March'       : 'Mars',
+			'April'       : 'Avril',
 			'May'         : 'Mai',
-			'Jun'         : 'Jun',
-			'Jul'         : 'Jul',
-			'Aug'         : 'Aoû',
-			'Sep'         : 'Sep',
-			'Oct'         : 'Oct',
-			'Nov'         : 'Nov',
-			'Dec'         : 'Déc',
+			'June'        : 'Juin',
+			'July'        : 'Huillet',
+			'August'      : 'Août',
+			'September'   : 'Septembre',
+			'October'     : 'Octobre',
+			'November'    : 'Novembre',
+			'December'    : 'Décembre',
+			'Sunday'      : 'Dimanche',
+			'Monday'      : 'Lundi',
+			'Tuesday'     : 'Mardi',
+			'Wednesday'   : 'Mercredi',
+			'Thursday'    : 'Jeudi',
+			'Friday'      : 'Vendredi',
+			'Saturday'    : 'Samedi',
+			'Sun'         : 'Dim',
+			'Mon'         : 'Lun',
+			'Tue'         : 'Mar',
+			'Wed'         : 'Mer',
+			'Thu'         : 'Jeu',
+			'Fri'         : 'Ven',
+			'Sat'         : 'Sam',
 
 			/******************************** sort variants ********************************/
-			'sortnameDirsFirst' : 'par nom (dossiers en premier)', 
-			'sortkindDirsFirst' : 'par type (dossiers en premier)', 
-			'sortsizeDirsFirst' : 'par taille (dossiers en premier)', 
-			'sortdateDirsFirst' : 'par date (dossiers en premier)', 
-			'sortname'          : 'par nom', 
-			'sortkind'          : 'par type', 
+			'sortname'          : 'par nom',
+			'sortkind'          : 'par type',
 			'sortsize'          : 'par taille',
 			'sortdate'          : 'par date',
+			'sortFoldersFirst'  : 'Dossiers en premier',
 
 			/********************************** messages **********************************/
 			'confirmReq'      : 'Confirmation requise',
@@ -174,7 +251,7 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'viewlist'        : 'Vue listing',
 			'viewicons'       : 'Vue icônes',
 			'places'          : 'Places',
-			'calc'            : 'Calculer', 
+			'calc'            : 'Calculer',
 			'path'            : 'Chemin',
 			'aliasfor'        : 'Raccourcis pour',
 			'locked'          : 'Verrouiller',
@@ -185,14 +262,14 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'yes'             : 'oui',
 			'no'              : 'non',
 			'link'            : 'Lien',
-			'searcresult'     : 'Résultat de la recherche',  
+			'searcresult'     : 'Résultat de la recherche',
 			'selected'        : 'Éléments sélectionnés',
 			'about'           : 'À propos',
 			'shortcuts'       : 'Raccourcis',
 			'help'            : 'Aide',
 			'webfm'           : 'Gestionnaire de fichier Web',
 			'ver'             : 'Version',
-			'protocol'        : 'Version du protocole',
+			'protocolver'     : 'Version du protocole',
 			'homepage'        : 'Page du projet',
 			'docs'            : 'Documentation',
 			'github'          : 'Forker-nous sur Github',
@@ -212,30 +289,66 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'selectForUpload' : 'Sélectionner les fichiers à envoyer',
 			'moveFiles'       : 'Déplacer les fichiers',
 			'copyFiles'       : 'Copier les fichiers',
-			'rmFromPlaces'    : 'Remove from places',
-			'untitled folder' : 'dossier sans nom',
-			'untitled file.txt' : 'sans nom file.txt',
-			
+			'rmFromPlaces'    : 'Retirer de Places',
+			'aspectRatio'     : 'Ratio d’affichage',
+			'scale'           : 'Mise à l\'échelle',
+			'width'           : 'Largeur',
+			'height'          : 'Hauteur',
+			'resize'          : 'Redimensionner',
+			'crop'            : 'Recadrer',
+			'rotate'          : 'Rotation',
+			'rotate-cw'       : 'Rotation de 90 degrés horaire',
+			'rotate-ccw'      : 'Rotation de 90 degrés antihoraire',
+			'degree'          : '°',
+			'netMountDialogTitle' : 'Monter un volume réseau', // added 18.04.2012
+			'protocol'            : 'Protocole', // added 18.04.2012
+			'host'                : 'Hôte', // added 18.04.2012
+			'port'                : 'Port', // added 18.04.2012
+			'user'                : 'Utilisateur', // added 18.04.2012
+			'pass'                : 'Mot de passe', // added 18.04.2012
+			'confirmUnmount'      : 'Démonter $1?',  // from v2.1 added 30.04.2012
+			'dropFilesBrowser': 'Glissez-déposez depuis le navigateur de fichier', // from v2.1 added 30.05.2012
+			'dropPasteFiles'  : 'Glissez-déposez les fichiers ici', // from v2.1 added 07.04.2014
+			'encoding'        : 'Encodage', // from v2.1 added 19.12.2014
+			'locale'          : 'Encodage régional',   // from v2.1 added 19.12.2014
+			'searchTarget'    : 'Destination: $1',                // from v2.1 added 22.5.2015
+			'searchMime'      : 'Recherche par type MIME', // from v2.1 added 22.5.2015
+			'owner'           : 'Propriétaire', // from v2.1 added 20.6.2015
+			'group'           : 'Groupe', // from v2.1 added 20.6.2015
+			'other'           : 'Autre', // from v2.1 added 20.6.2015
+			'execute'         : 'Exécuter', // from v2.1 added 20.6.2015
+			'perm'            : 'Permission', // from v2.1 added 20.6.2015
+			'mode'            : 'Mode', // from v2.1 added 20.6.2015
+			'emptyFolder'     : 'Le dossier est vide', // from v2.1.6 added 30.12.2015
+			'emptyFolderDrop' : 'Le dossier est vide.\\ Glissez-déposez pour ajouter des éléments.', // from v2.1.6 added 30.12.2015
+			'emptyFolderLTap' : 'Le dossier est vide.\\ Un appui long pour ajouter des éléments.', // from v2.1.6 added 30.12.2015
+			'quality'         : 'Qualité', // from v2.1.6 added 5.1.2016
+			'autoSync'        : 'Synchronisation automatique',  // from v2.1.6 added 10.1.2016
+			'moveUp'          : 'Déplacer vers le haut',  // from v2.1.6 added 18.1.2016
+			'getLink'         : 'Obtenir le lien d’URL', // from v2.1.7 added 9.2.2016
+			'selectedItems'   : 'Éléments sélectionnés ($1)', // from v2.1.7 added 2.19.2016
+
 			/********************************** mimetypes **********************************/
 			'kindUnknown'     : 'Inconnu',
 			'kindFolder'      : 'Dossier',
-			'kindAlias'       : 'Raccourcis',
-			'kindAliasBroken' : 'Raccourcis cassé',
+			'kindAlias'       : 'Raccourci',
+			'kindAliasBroken' : 'Raccourci cassé',
 			// applications
 			'kindApp'         : 'Application',
 			'kindPostscript'  : 'Document Postscript',
 			'kindMsOffice'    : 'Document Microsoft Office',
 			'kindMsWord'      : 'Document Microsoft Word',
 			'kindMsExcel'     : 'Document Microsoft Excel',
-			'kindMsPP'        : 'Présentation Microsoft Powerpoint',
-			'kindOO'          : 'Document Open Office',
-			'kindAppFlash'    : 'Application flash',
+			'kindMsPP'        : 'Présentation Microsoft PowerPoint',
+			'kindOO'          : 'Document OpenOffice',
+			'kindAppFlash'    : 'Application Flash',
 			'kindPDF'         : 'Portable Document Format (PDF)',
-			'kindTorrent'     : 'Fichier Bittorrent',
+			'kindTorrent'     : 'Fichier BitTorrent',
 			'kind7z'          : 'Archive 7z',
 			'kindTAR'         : 'Archive TAR',
 			'kindGZIP'        : 'Archive GZIP',
 			'kindBZIP'        : 'Archive BZIP',
+			'kindXZ'          : 'Archive XZ',
 			'kindZIP'         : 'Archive ZIP',
 			'kindRAR'         : 'Archive RAR',
 			'kindJAR'         : 'Fichier Java JAR',
@@ -246,10 +359,10 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'kindText'        : 'Document Text',
 			'kindTextPlain'   : 'Texte non formaté',
 			'kindPHP'         : 'Source PHP',
-			'kindCSS'         : 'Cascading style sheet',
+			'kindCSS'         : 'Feuille de style en cascade',
 			'kindHTML'        : 'Document HTML',
-			'kindJS'          : 'Source Javascript',
-			'kindRTF'         : 'Rich Text Format',
+			'kindJS'          : 'Source JavaScript',
+			'kindRTF'         : 'Format de texte enrichi (Rich Text Format)',
 			'kindC'           : 'Source C',
 			'kindCHeader'     : 'Source header C',
 			'kindCPP'         : 'Source C++',
@@ -294,5 +407,5 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'kindVideoMKV'    : 'Vidéo Matroska',
 			'kindVideoOGG'    : 'Vidéo Ogg'
 		}
-	}
+	};
 }

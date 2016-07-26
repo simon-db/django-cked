@@ -75,12 +75,11 @@ def elfinder_connector(request):
                     
                 up_files[file_name] = up.file
 
-        req[field] = up_files
+        req['upload[]'] = up_files
 
     status, header, response = elf.run(req)
 
-    if not response is None and status == 200:
+    if response is not None and status == 200:
         if 'file' in response and isinstance(response['file'], file):
             response['file'].close()
-
     return HttpResponse(json.dumps(response), content_type='application/json')

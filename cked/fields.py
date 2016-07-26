@@ -28,5 +28,5 @@ class RichTextFormField(forms.fields.Field):
 try:
     from south.modelsinspector import add_introspection_rules
     add_introspection_rules([], ["^cked\.fields\.RichTextField"])
-except:
+except ImportError:
     pass

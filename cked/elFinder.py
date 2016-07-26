@@ -13,6 +13,7 @@ import time
 from datetime import datetime
 
 import threading
+
 threading._DummyThread._Thread__stop = lambda x: 42
 
 
@@ -40,15 +41,15 @@ class connector():
         # 'aclObj': None, # TODO
         # 'aclRole': 'user', # TODO
         'defaults': {
-        'read': True,
-        'write': True,
-        'rm': True
+            'read': True,
+            'write': True,
+            'rm': True
         },
         'perms': {},
         'archiveMimes': {},
         'archivers': {
-        'create': {},
-        'extract': {}
+            'create': {},
+            'extract': {}
         },
         'disabled': [],
         'debug': False
@@ -163,10 +164,15 @@ class connector():
         """main function"""
         self.__reset()
         rootOk = True
-        if not os.path.exists(self._options['root'])\
-                or self._options['root'] == '':
+        if self._options['root'] == '':
             rootOk = False
             self._response['error'] = 'Invalid backend configuration'
+        elif not os.path.exists(self._options['root']):
+            try:
+                os.makedirs(self._options['root'])
+            except os.error:
+                rootOk = False
+                self._response['error'] = 'Invalid backend configuration'
         elif not self.__isAllowed(self._options['root'], 'read'):
             rootOk = False
             self._response['error'] = 'Access denied'
@@ -219,8 +225,8 @@ class connector():
         if self.httpStatusCode < 100:
             self.httpStatusCode = 200
 
-        if not 'Content-type' in self.httpHeader:
-            if ('cmd' in self._request and self._request['cmd'] == 'upload')\
+        if 'Content-type' not in self.httpHeader:
+            if ('cmd' in self._request and self._request['cmd'] == 'upload') \
                     or self._options['debug']:
                 self.httpHeader['Content-type'] = 'text/html'
             else:
@@ -242,7 +248,7 @@ class connector():
                 self.httpHeader['Content-type'] = 'text/html'
                 self.httpResponse = 'File not found'
                 return
-            if not self.__isAllowed(curDir, 'read')\
+            if not self.__isAllowed(curDir, 'read') \
                     or not self.__isAllowed(curFile, 'read'):
                 self.httpStatusCode = 403
                 self.httpHeader['Content-type'] = 'text/html'
@@ -257,7 +263,7 @@ class connector():
                     self.httpResponse = 'File not found'
                     return
                 if (
-                        not self.__isAllowed(os.path.dirname(curFile), 'read')
+                            not self.__isAllowed(os.path.dirname(curFile), 'read')
                         or not self.__isAllowed(curFile, 'read')
                 ):
                     self.httpStatusCode = 403
@@ -277,8 +283,8 @@ class connector():
             self.httpStatusCode = 200
             self.httpHeader['Content-type'] = mime
             self.httpHeader[
-                'Content-Disposition'] = disp + '; filename='\
-                + os.path.basename(curFile)
+                'Content-Disposition'] = disp + '; filename=' \
+                                         + os.path.basename(curFile)
             self.httpHeader['Content-Location'] = curFile.replace(
                 self._options['root'], '')
             self.httpHeader['Content-Transfer-Encoding'] = 'binary'
@@ -306,7 +312,7 @@ class connector():
         """Rename file or dir"""
         current = name = target = None
         curDir = curName = newName = None
-        if 'name' in self._request and 'current' in self._request\
+        if 'name' in self._request and 'current' in self._request \
                 and 'target' in self._request:
             name = self._request['name']
             current = self._request['current']
@@ -317,7 +323,7 @@ class connector():
 
         if not curDir or not curName:
             self._response['error'] = 'File not found'
-        elif not self.__isAllowed(curDir, 'write')\
+        elif not self.__isAllowed(curDir, 'write') \
                 and self.__isAllowed(curName, 'rm'):
             self._response['error'] = 'Access denied'
         elif not self.__checkName(name):
@@ -339,6 +345,7 @@ class connector():
         current = None
         path = None
         newDir = None
+        name = ''
         if 'name' in self._request and 'current' in self._request:
             name = self._request['name']
             current = self._request['current']
@@ -456,7 +463,7 @@ class connector():
                         name = os.path.join(curDir, name)
                         try:
                             f = open(name, 'wb', self._options[
-                                     'uploadWriteChunk'])
+                                'uploadWriteChunk'])
                             for chunk in self.__fbuffer(data):
                                 f.write(chunk)
                             f.close()
@@ -479,7 +486,7 @@ class connector():
                                 os.unlink(name)
                                 self.__errorData(
                                     name, 'File exceeds the maximum ' +
-                                    'allowed filesize')
+                                          'allowed filesize')
                             except:
                                 pass
                                 # TODO ?
@@ -498,12 +505,12 @@ class connector():
 
     def __paste(self):
         """Copy or cut files/directories"""
-        if 'current' in self._request and 'src' in self._request\
+        if 'current' in self._request and 'src' in self._request \
                 and 'dst' in self._request:
             curDir = self.__findDir(self._request['current'], None)
             src = self.__findDir(self._request['src'], None)
             dst = self.__findDir(self._request['dst'], None)
-            if not curDir or not src or not dst\
+            if not curDir or not src or not dst \
                     or not 'targets[]' in self._request:
                 self._response['error'] = 'Invalid parameters'
                 return
@@ -516,7 +523,7 @@ class connector():
                 if self._request['cut'] == '1':
                     cut = True
 
-            if not self.__isAllowed(src, 'read')\
+            if not self.__isAllowed(src, 'read') \
                     or not self.__isAllowed(dst, 'write'):
                 self._response['error'] = 'Access denied'
                 return
@@ -534,15 +541,15 @@ class connector():
                 if cut:
                     if not self.__isAllowed(f, 'rm'):
                         self._response['error'] = 'Move failed'
-                        self._errorData(f, 'Access denied')
+                        self.__errorData(f, 'Access denied')
                         self.__content(curDir, True)
                         return
                     # TODO thumbs
                     if os.path.exists(newDst):
                         self._response['error'] = 'Unable to move files'
-                        self._errorData(
+                        self.__errorData(
                             f, 'File or folder with the same name ' +
-                            'already exists')
+                               'already exists')
                         self.__content(curDir, True)
                         return
                     try:
@@ -551,7 +558,7 @@ class connector():
                         continue
                     except:
                         self._response['error'] = 'Unable to move files'
-                        self._errorData(f, 'Unable to move')
+                        self.__errorData(f, 'Unable to move')
                         self.__content(curDir, True)
                         return
                 else:
@@ -574,7 +581,7 @@ class connector():
             if not curDir or not target:
                 self._response['error'] = 'Invalid parameters'
                 return
-            if not self.__isAllowed(target, 'read')\
+            if not self.__isAllowed(target, 'read') \
                     or not self.__isAllowed(curDir, 'write'):
                 self._response['error'] = 'Access denied'
             newName = self.__uniqueName(target)
@@ -582,14 +589,14 @@ class connector():
                 self._response['error'] = 'Unable to create file copy'
                 return
 
-        self.__content(curDir, True)
+            self.__content(curDir, True)
         return
 
     def __resize(self):
         """Scale image size"""
         if not (
-                'current' in self._request and 'target' in self._request
-                and 'width' in self._request and 'height' in self._request
+                                'current' in self._request and 'target' in self._request
+                    and 'width' in self._request and 'height' in self._request
         ):
             self._response['error'] = 'Invalid parameters'
             return
@@ -616,7 +623,7 @@ class connector():
             imResized = im.resize((width, height), self._im.ANTIALIAS)
             imResized.save(curFile)
         except Exception, e:
-            self.__debug('resizeFailed_' + path, str(e))
+            self.__debug('resizeFailed_' + curFile, str(e))
             self._response['error'] = 'Unable to resize image'
             return
 
@@ -645,7 +652,7 @@ class connector():
             for f in os.listdir(curDir):
                 path = os.path.join(curDir, f)
                 fhash = self.__hash(path)
-                if self.__canCreateTmb(path)\
+                if self.__canCreateTmb(path) \
                         and self.__isAllowed(path, 'read'):
                     tmb = os.path.join(self._options['tmbDir'], fhash + '.png')
                     if not os.path.exists(tmb):
@@ -693,7 +700,7 @@ class connector():
             'rel': self.__checkUtf8(rel),
             'size': 0,
             'date': datetime.fromtimestamp(os.stat(path).st_mtime).
-            strftime("%d %b %Y %H:%M"),
+                strftime("%d %b %Y %H:%M"),
             'read': True,
             'write': self.__isAllowed(path, 'write'),
             'rm': not root and self.__isAllowed(path, 'rm')
@@ -797,7 +804,7 @@ class connector():
                         return info
 
                     tmb = os.path.join(self._options[
-                                       'tmbDir'], info['hash'] + '.png')
+                                           'tmbDir'], info['hash'] + '.png')
 
                     if os.path.exists(tmb):
                         tmbUrl = self.__path2url(tmb)
@@ -830,7 +837,7 @@ class connector():
         if self.__isAllowed(path, 'read'):
             for d in sorted(os.listdir(path)):
                 pd = os.path.join(path, d)
-                if os.path.isdir(pd) and not os.path.islink(pd)\
+                if os.path.isdir(pd) and not os.path.islink(pd) \
                         and self.__isAccepted(d):
                     tree['dirs'].append(self.__tree(pd))
 
@@ -843,7 +850,7 @@ class connector():
         lastDot = curName.rfind('.')
         ext = newName = ''
 
-        if not os.path.isdir(path)\
+        if not os.path.isdir(path) \
                 and re.search(r'\..{3}\.(gz|bz|bz2)$', curName):
             pos = -7
             if curName[-1:] == '2':
@@ -883,7 +890,7 @@ class connector():
             newPath = os.path.join(curDir, newNameExt)
             if not os.path.exists(newPath):
                 return newPath
-            # if idx >= 1000: break # possible loop
+                # if idx >= 1000: break # possible loop
 
         return
 
@@ -1008,7 +1015,7 @@ class connector():
     def __edit(self):
         """Save content in file"""
         error = ''
-        if 'current' in self._request and 'target' in self._request\
+        if 'current' in self._request and 'target' in self._request \
                 and 'content' in self._request:
             curDir = self.__findDir(self._request['current'], None)
             curFile = self.__find(self._request['target'], curDir)
@@ -1034,9 +1041,9 @@ class connector():
         self.__checkArchivers()
 
         if (
-                not self._options['archivers']['create']
-                or not 'type' in self._request
-                or not 'current' in self._request
+                            not self._options['archivers']['create']
+                        or not 'type' in self._request
+                    or not 'current' in self._request
                 or not 'targets[]' in self._request):
             self._response['error'] = 'Invalid parameters'
             return
@@ -1044,9 +1051,9 @@ class connector():
         curDir = self.__findDir(self._request['current'], None)
         archiveType = self._request['type']
         if (
-                not archiveType in self._options['archivers']['create']
-                or not archiveType in self._options['archiveMimes']
-                or not curDir
+                            not archiveType in self._options['archivers']['create']
+                        or not archiveType in self._options['archiveMimes']
+                    or not curDir
                 or not self.__isAllowed(curDir, 'write')):
             self._response['error'] = 'Unable to create archive'
             return
@@ -1104,9 +1111,9 @@ class connector():
         self.__checkArchivers()
 
         if (
-                not mime in self._options['archivers']['extract']
-                or not curDir
-                or not curFile
+                            not mime in self._options['archivers']['extract']
+                        or not curDir
+                    or not curFile
                 or not self.__isAllowed(curDir, 'write')):
             self._response['error'] = 'Invalid parameters'
             return
@@ -1248,7 +1255,7 @@ class connector():
         if self._options['tmbDir']:
             if not os.path.dirname(path) == self._options['tmbDir']:
                 tmb = os.path.join(self._options[
-                                   'tmbDir'], self.__hash(path) + '.png')
+                                       'tmbDir'], self.__hash(path) + '.png')
         return tmb
 
     def __isUploadAllow(self, name):
@@ -1314,7 +1321,7 @@ class connector():
         path = path[len(os.path.normpath(self._options['root'])):]
         for ppath in self._options['perms']:
             regex = r'' + ppath
-            if re.search(regex, path)\
+            if re.search(regex, path) \
                     and access in self._options['perms'][ppath]:
                 return self._options['perms'][ppath][access]
 
@@ -1332,7 +1339,7 @@ class connector():
         curDir = path
         length = len(self._options['root'])
         url = self.__checkUtf8(self._options[
-                               'URL'] + curDir[length:]).replace(os.sep, '/')
+                                   'URL'] + curDir[length:]).replace(os.sep, '/')
 
         try:
             import urllib
@@ -1348,8 +1355,7 @@ class connector():
     def __initImgLib(self):
         if not self._options['imgLib'] is False and self._im is None:
             try:
-                import Image
-                Image
+                from PIL import Image
                 self._im = Image
                 self._options['imgLib'] = 'PIL'
             except:
@@ -1383,7 +1389,7 @@ class connector():
         # print 'out:', out, '\nerr:', err, '\n'
         archive = {'create': {}, 'extract': {}}
 
-        if 'archive' in self._options['disabled']\
+        if 'archive' in self._options['disabled'] \
                 and 'extract' in self._options['disabled']:
             self._options['archiveMimes'] = []
             self._options['archivers'] = archive
@@ -1451,30 +1457,30 @@ class connector():
             mime = 'application/x-tar'
             if not mime in c:
                 c.update({mime: {
-                         'cmd': p7zip, 'argc': 'a -ttar', 'ext': 'tar'}})
+                    'cmd': p7zip, 'argc': 'a -ttar', 'ext': 'tar'}})
             if not mime in e:
                 e.update({mime: {'cmd': p7zip, 'argc': 'e -y', 'ext': 'tar'}})
 
             mime = 'application/x-gzip'
             if not mime in c:
                 c.update({mime: {
-                         'cmd': p7zip, 'argc': 'a -tgzip', 'ext': 'gz'}})
+                    'cmd': p7zip, 'argc': 'a -tgzip', 'ext': 'gz'}})
             if not mime in e:
                 e.update({mime: {
-                         'cmd': p7zip, 'argc': 'e -y', 'ext': 'tar.gz'}})
+                    'cmd': p7zip, 'argc': 'e -y', 'ext': 'tar.gz'}})
 
             mime = 'application/x-bzip2'
             if not mime in c:
                 c.update({mime: {
-                         'cmd': p7zip, 'argc': 'a -tbzip2', 'ext': 'bz2'}})
+                    'cmd': p7zip, 'argc': 'a -tbzip2', 'ext': 'bz2'}})
             if not mime in e:
                 e.update({mime: {
-                         'cmd': p7zip, 'argc': 'e -y', 'ext': 'tar.bz2'}})
+                    'cmd': p7zip, 'argc': 'e -y', 'ext': 'tar.bz2'}})
 
             mime = 'application/zip'
-            if not mime in c:
+            if mime not in c:
                 c.update({mime: {
-                         'cmd': p7zip, 'argc': 'a -tzip', 'ext': 'zip'}})
+                    'cmd': p7zip, 'argc': 'a -tzip', 'ext': 'zip'}})
             if not mime in e:
                 e.update({mime: {'cmd': p7zip, 'argc': 'e -y', 'ext': 'zip'}})
 

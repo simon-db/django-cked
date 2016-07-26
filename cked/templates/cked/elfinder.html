@@ -1,53 +1,51 @@
 <!DOCTYPE html>
 {% load static %}
 <html>
-  <head>
+<head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>elFinder 2.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2" />
 
     <!-- jQuery and jQuery UI (REQUIRED) -->
-    <link rel="stylesheet" type="text/css" media="screen" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/smoothness/jquery-ui.css">
-	  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-	  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+    <!-- elFinder CSS (REQUIRED) -->
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'cked/elfinder/css/elfinder.min.css' %}">
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'cked/elfinder/css/theme.css' %}">
 
-	  <!-- elFinder CSS (REQUIRED) -->
-	  <link rel="stylesheet" type="text/css" media="screen" href="{% static 'cked/elfinder/css/elfinder.min.css' %}">
-	  <link rel="stylesheet" type="text/css" media="screen" href="{% static 'cked/elfinder/css/theme.css' %}">
-    <!-- elFinder proxy for using v1 API (REQUIRED)-->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+
+    <script type="text/javascript" src="{% static 'cked/elfinder/js/elfinder.full.js' %}"></script>
     <script src="{% static 'cked/elfinder/js/proxy/elFinderSupportVer1.js' %}" type="text/javascript" charset="utf-8"></script>
-	  <!-- elFinder JS (REQUIRED) -->
-	  <script type="text/javascript" src="{% static 'cked/elfinder/js/elfinder.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'cked/elfinder/js/i18n/elfinder.ru.js' %}"></script>
 
-	  <!-- elFinder translation (OPTIONAL) -->
-	  <script type="text/javascript" src="{% static 'cked/elfinder/js/i18n/elfinder.ru.js' %}"></script>
+    <!-- elFinder initialization (REQUIRED) -->
+    <script type="text/javascript" charset="utf-8">
+        function getUrlParam(paramName) {
+            var reParam = new RegExp('(?:[\?&]|&amp;)' + paramName + '=([^&]+)', 'i');
+            var match = window.location.search.match(reParam);
 
-	  <!-- elFinder initialization (REQUIRED) -->
-	  <script type="text/javascript" charset="utf-8">
-    function getUrlParam(paramName) {
-      var reParam = new RegExp('(?:[\?&]|&amp;)' + paramName + '=([^&]+)', 'i') ;
-      var match = window.location.search.match(reParam) ;
-      
-      return (match && match.length > 1) ? match[1] : '' ;
-    }
-	  $().ready(function() {
-      var funcNum = getUrlParam('CKEditorFuncNum');
+            return (match && match.length > 1) ? match[1] : '';
+        }
+        $().ready(function () {
+            var funcNum = getUrlParam('CKEditorFuncNum');
 
-      var options = {{ options|safe }};
-      options['transport'] = new elFinderSupportVer1();
-      options['getFileCallback'] = function(url) {
-        window.opener.CKEDITOR.tools.callFunction(funcNum, url);
-        window.close()
-      };
+            var options = {{ options|safe }};
+            options['transport'] = new elFinderSupportVer1();
+            options['getFileCallback'] = function (url) {
+                console.log(url)
+               window.opener.CKEDITOR.tools.callFunction(funcNum, url.url);
+                window.close();
+            };
 
+            var elf = $('#elfinder').elfinder(options).elfinder('instance');
+        });
+    </script>
+</head>
+<body>
 
-	    var elf = $('#elfinder').elfinder(options).elfinder('instance');
-	  });
-	  </script>
-	</head>
-	<body>
+<!-- Element where elFinder will be created (REQUIRED) -->
+<div id="elfinder"></div>
 
-	  <!-- Element where elFinder will be created (REQUIRED) -->
-	  <div id="elfinder"></div>
-
-	</body>
+</body>
 </html>

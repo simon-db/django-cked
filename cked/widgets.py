@@ -35,7 +35,9 @@ Widget providing CKEditor for Rich Text Editing.
         self.options = default_settings.CKEDITOR_DEFAULT_OPTIONS.copy()
 
         # If CKEDITOR_OPTIONS presented in settings, use it!
-        general_options = getattr(settings, 'CKEDITOR_OPTIONS', None)
+        general_options = getattr(settings, 'CKEDITOR_OPTIONS', {})
+        if general_options is None:
+            general_options = {}
 
         if config_name in general_options:
             options = general_options[config_name]

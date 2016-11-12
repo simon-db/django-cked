@@ -17,7 +17,7 @@ setup(
     license='BSD',
     keywords='django, ckeditor, elfinder, wysiwyg, upload',
     url='https://github.com/futurecolors/django-cked',
-    packages=find_packages(),
+    packages=['cked'],
     long_description=README,
     include_package_data=True,
     install_requires=[

@@ -14,13 +14,12 @@ setup(
     author='Future Colors (original by Svyatoslav Bulbakha)',
     author_email='info@futurecolors.ru',
     description='CKEditor and elFinder integration for Django Framework.',
-    license='BSD',
-    keywords='django, ckeditor, elfinder, wysiwyg, upload',
-    url='https://github.com/futurecolors/django-cked',
-    packages=['cked'],
+    url='https://github.com/simon-db/django-cked',
+    packages=find_packages(),
     long_description=README,
     include_package_data=True,
     install_requires=[
+        'django',
         'pytils'
     ],
 )

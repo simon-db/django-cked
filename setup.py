@@ -9,7 +9,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 
 setup(
-    name='django-cked',
+    name='cked',
     version='0.1.2',
     author='Future Colors (original by Svyatoslav Bulbakha)',
     author_email='info@futurecolors.ru',

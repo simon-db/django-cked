@@ -1,6 +1,6 @@
 import os
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 README = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 
@@ -17,7 +17,7 @@ setup(
     license='BSD',
     keywords='django, ckeditor, elfinder, wysiwyg, upload',
     url='https://github.com/futurecolors/django-cked',
-    packages=['cked'],
+    packages=find_packages(),
     long_description=README,
     include_package_data=True,
     install_requires=[

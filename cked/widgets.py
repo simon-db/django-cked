@@ -1,24 +1,20 @@
+import json
 from django import forms
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
-from django.utils.encoding import force_unicode
+try:
+    from django.utils.encoding import force_unicode
+except ImportError:
+    from django.utils.encoding import force_str as force_unicode
+
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 
 from django.core.exceptions import ImproperlyConfigured
 from django.forms.utils import flatatt
-
-try:
-    import json
-except ImportError:
-    from django.utils import simplejson as json
-
 from cked import default_settings
-
-
-json_encode = json.JSONEncoder().encode
 
 
 class CKEditorWidget(forms.Textarea):
@@ -64,7 +60,7 @@ Widget providing CKEditor for Rich Text Editing.
             'final_attrs': flatatt(final_attrs),
             'value': conditional_escape(force_unicode(value)),
             'id': final_attrs['id'],
-            'options': json_encode(self.options)})
+            'options': json.dumps(self.options)})
         )
 
     def build_attrs(self, base_attrs, extra_attrs=None, **kwargs):

@@ -1,3 +1,5 @@
+# _*_coding:utf-8 _*_
+from __future__ import unicode_literals
 #!/usr/bin/env python
 #
 # Connector for elFinder File Manager
@@ -26,8 +28,8 @@ class connector():
         'rootAlias': 'Home',
         'dotFiles': False,
         'dirSize': True,
-        'fileMode': 0644,
-        'dirMode': 0755,
+        'fileMode': 0o644,
+        'dirMode': 0o755,
         'imgLib': 'auto',
         'tmbDir': '.tmb',
         'tmbAtOnce': 5,
@@ -126,9 +128,7 @@ class connector():
             self._options[opt] = opts.get(opt)
 
         self._response['debug'] = {}
-        self._options['URL'] = self.__checkUtf8(self._options['URL'])
         self._options['URL'] = self._options['URL'].rstrip('/')
-        self._options['root'] = self.__checkUtf8(self._options['root'])
         self._options['root'] = self._options['root'].rstrip(os.sep)
         self.__debug('URL', self._options['URL'])
         self.__debug('root', self._options['root'])
@@ -190,7 +190,7 @@ class connector():
                     if callable(func):
                         try:
                             func()
-                        except Exception, e:
+                        except Exception as e:
                             self._response['error'] = 'Command Failed'
                             self.__debug('exception', str(e))
                 else:
@@ -208,8 +208,8 @@ class connector():
                 self._response['params'] = {
                     'dotFiles': self._options['dotFiles'],
                     'uplMaxSize': str(self._options['uploadMaxSize']) + 'M',
-                    'archives': self._options['archivers']['create'].keys(),
-                    'extract': self._options['archivers']['extract'].keys(),
+                    'archives': list(self._options['archivers']['create'].keys()),
+                    'extract': list(self._options['archivers']['extract'].keys()),
                     'url': url
                 }
 
@@ -242,7 +242,6 @@ class connector():
         if 'current' in self._request:
             curDir = self.__findDir(self._request['current'], None)
             curFile = self.__find(self._request['target'], curDir)
-
             if not curDir or not curFile or os.path.isdir(curFile):
                 self.httpStatusCode = 404
                 self.httpHeader['Content-type'] = 'text/html'
@@ -286,7 +285,8 @@ class connector():
                 'Content-Disposition'] = disp + '; filename=' \
                                          + os.path.basename(curFile)
             self.httpHeader['Content-Location'] = curFile.replace(
-                self._options['root'], '')
+                bytes(self._options['root'], 'utf-8'), 
+                '')
             self.httpHeader['Content-Transfer-Encoding'] = 'binary'
             self.httpHeader['Content-Length'] = str(os.lstat(curFile).st_size)
             self.httpHeader['Connection'] = 'close'
@@ -295,7 +295,6 @@ class connector():
         # try dir
         else:
             path = self._options['root']
-
             if 'target' in self._request and self._request['target']:
                 target = self.__findDir(self._request['target'], None)
                 if not target:
@@ -304,7 +303,6 @@ class connector():
                     self._response['error'] = 'Access denied'
                 else:
                     path = target
-
             self.__content(path, 'tree' in self._request)
         pass
 
@@ -453,7 +451,7 @@ class connector():
             total = 0
             upSize = 0
             maxSize = self._options['uploadMaxSize'] * 1024 * 1024
-            for name, data in upFiles.iteritems():
+            for name, data in upFiles.items():
                 if name:
                     total += 1
                     name = os.path.basename(name)
@@ -478,7 +476,7 @@ class connector():
                                     os.unlink(name)
                                 except:
                                     pass
-                        except:
+                        except Exception as e:
                             self.__errorData(
                                 name, 'Unable to save uploaded file')
                         if upSize > maxSize:
@@ -622,7 +620,7 @@ class connector():
             im = self._im.open(curFile)
             imResized = im.resize((width, height), self._im.ANTIALIAS)
             imResized.save(curFile)
-        except Exception, e:
+        except Exception as e:
             self.__debug('resizeFailed_' + curFile, str(e))
             self._response['error'] = 'Unable to resize image'
             return
@@ -685,19 +683,17 @@ class connector():
             root = True
         else:
             root = False
-
         if self._options['rootAlias']:
             basename = self._options['rootAlias']
         else:
             basename = os.path.basename(self._options['root'])
 
         rel = basename + path[len(self._options['root']):]
-
         self._response['cwd'] = {
             'hash': self.__hash(path),
-            'name': self.__checkUtf8(name),
+            'name': name,
             'mime': 'directory',
-            'rel': self.__checkUtf8(rel),
+            'rel': rel,
             'size': 0,
             'date': datetime.fromtimestamp(os.stat(path).st_mtime).
                 strftime("%d %b %Y %H:%M"),
@@ -748,7 +744,7 @@ class connector():
             fdate = statDate.strftime("%d %b %Y %H:%M")
 
         info = {
-            'name': self.__checkUtf8(os.path.basename(path)),
+            'name': os.path.basename(path),
             'hash': self.__hash(path),
             'mime': 'directory' if filetype == 'dir'
             else self.__mimetype(path),
@@ -828,7 +824,7 @@ class connector():
             name = os.path.basename(path)
         tree = {
             'hash': self.__hash(path),
-            'name': self.__checkUtf8(name),
+            'name': name,
             'read': self.__isAllowed(path, 'read'),
             'write': self.__isAllowed(path, 'write'),
             'dirs': []
@@ -1177,7 +1173,7 @@ class connector():
                 im = im.crop(box)
             im.thumbnail(size, self._im.ANTIALIAS)
             im.save(tmb, 'PNG')
-        except Exception, e:
+        except Exception as e:
             self.__debug('tmbFailed_' + path, str(e))
             return False
         return True
@@ -1330,16 +1326,13 @@ class connector():
     def __hash(self, path, u=False):
         """Hash of the path"""
         m = hashlib.md5()
-        if u:
-            path = path.encode('utf-8')
-        m.update(path)
+        m.update(bytes(path, 'utf-8'))
         return str(m.hexdigest())
 
     def __path2url(self, path):
         curDir = path
         length = len(self._options['root'])
-        url = self.__checkUtf8(self._options[
-                                   'URL'] + curDir[length:]).replace(os.sep, '/')
+        url = (self._options['URL'] + curDir[length:]).replace(os.sep, '/')
 
         try:
             import urllib
@@ -1485,7 +1478,7 @@ class connector():
                 e.update({mime: {'cmd': p7zip, 'argc': 'e -y', 'ext': 'zip'}})
 
         if not self._options['archiveMimes']:
-            self._options['archiveMimes'] = c.keys()
+            self._options['archiveMimes'] = list(c.keys())
         else:
             pass
 
@@ -1510,12 +1503,3 @@ class connector():
             return False
 
         return True
-
-    def __checkUtf8(self, name):
-        try:
-            name.decode('utf-8')
-        except UnicodeDecodeError:
-            name = unicode(name, 'utf-8', 'replace')
-            self.__debug('invalid encoding', name)
-            # name += ' (invalid encoding)'
-        return name

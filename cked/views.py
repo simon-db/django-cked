@@ -1,3 +1,5 @@
+import re
+import json
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -8,19 +10,8 @@ from django.template.defaultfilters import slugify
 from pytils.translit import translify
 
 from cked import elFinder
-from cked.widgets import json_encode
 from cked import default_settings
-import re
 from django.contrib.admin.views.decorators import staff_member_required
-
-
-try:
-    import json
-except ImportError:
-    from django.utils import simplejson as json
-
-
-json_encode = json.JSONEncoder().encode
 
 
 @staff_member_required
@@ -39,7 +30,7 @@ def elfinder(request):
                                        'dictionary type.')
 
     return render(request, 'cked/elfinder.html', {
-        'options': json_encode(options),
+        'options': json.dumps(options),
     })
 
 
@@ -82,4 +73,5 @@ def elfinder_connector(request):
     if response is not None and status == 200:
         if 'file' in response and isinstance(response['file'], file):
             response['file'].close()
+
     return HttpResponse(json.dumps(response), content_type='application/json')

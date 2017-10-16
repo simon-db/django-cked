@@ -18,8 +18,5 @@ setup(
     packages=find_packages(),
     long_description=README,
     include_package_data=True,
-    install_requires=[
-        'django',
-        'pytils'
-    ],
+    install_requires=[],
 )

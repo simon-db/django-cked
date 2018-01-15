@@ -1,7 +1,6 @@
 import json
 from django import forms
 from django.conf import settings
-from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
 try:
     from django.utils.encoding import force_unicode
@@ -10,7 +9,10 @@ except ImportError:
 
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
-from django.core.urlresolvers import reverse
+try:
+    from django.core.urlresolvers import reverse
+except ImportError:
+    from django.urls import reverse
 
 from django.core.exceptions import ImproperlyConfigured
 from django.forms.utils import flatatt
